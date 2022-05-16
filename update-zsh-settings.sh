@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Default script's settings
-LOGSTATUS=false
+LOGSTATUS=true
 ECHOSTATUS=true
 FORCESTATUS=false
 REMOTEUPDATE=true
@@ -15,15 +15,12 @@ done
 
 # Setting custom script's settings
 for param in "${SETTINGS[@]}"; do
-    if [[ "$param" == *"l"* ]] && [ -f "./logging.sh" ]; then LOGSTATUS=true; elif [[ "$param" == *"l"* ]] && ! [ -f "./logging.sh" ]; then smsg "Parameter \"l\" is set, but file \"logging.sh\" is not found. Logs cannot be written." "-e"; fi
-    case $param in 
-        *"e"*) ECHOSTATUS=false;;
-        *"f"*) FORCESTATUS=true; ECHOSTATUS=false;;
-        *"r"*) REMOTEUPDATE=false;;
-        *"x"*) CREATELINKS=false;;
-        *"t"*) TESTMSG=true
-    esac
-    if [[ "$param" == "e" ]]; then ECHOSTATUS=false; fi
+    if [[ "$param" == *"l"* ]] || [ -f "./logging.sh" ]; then LOGSTATUS=false; fi
+    if [[ $param == *"e"* ]]; then ECHOSTATUS=false; fi
+    if [[ $param == *"f"* ]]; then FORCESTATUS=true; ECHOSTATUS=false; fi
+    if [[ $param == *"r"* ]]; then REMOTEUPDATE=false; fi
+    if [[ $param == *"x"* ]]; then CREATELINKS=false; fi
+    if [[ $param == *"t"* ]]; then TESTMSG=true; fi
 done
 
 # Connecting "./logging.sh" if logging turned on
@@ -48,9 +45,9 @@ smsg () {
 # Checking and downloading updates from repo 
 update () {
     if [ -d /usr/share/zsh/core ]
-        then smsg "Checking and downloading updates"; cd /usr/share/zsh/core || return; git fetch; git pull --recurse-submodules> /dev/null 2>&1; smsg "Settings files downloaded"
-        else smsg "zsh/core/ dirrectory haven't found" "-e"; smsg "Cloning settings from repository"; git clone --recursive https://github.com/FrostmonsterSP/FMZshConfig.git /usr/share/zsh/core > /dev/null 2>&1; smsg "Updates checked and downloaded"
-    fi
+        then smsg "Checking and downloading updates"; cd /usr/share/zsh/core; git fetch /usr/share/zsh/core; git pull --recurse-submodules /usr/share/zsh/core; smsg "Settings files downloaded"
+        else smsg "zsh/core/ dirrectory haven't found" "-e"; smsg "Cloning settings from repository"; git clone --recursive https://github.com/FrostmonsterSP/FMZshConfig.git /usr/share/zsh/core; smsg "Updates checked and downloaded"
+    fi || return
     chmod +x -R /usr/share/zsh/core
 }
 
@@ -58,7 +55,7 @@ update () {
 userlinks () {
     if [ -f /usr/share/zsh/core/.zshrc ]
         then
-            smsg "Creating link in $1, user ${1//*\//}"
+            smsg "Creating link in $1, user ${1//*\//}"c
             ln -sf "/usr/share/zsh/core/.zshrc" "$1/.zshrc"; #chown -h "${1//*\//}":"${1//*\//}" "$1/.zshrc"
             if [ "$(find $1 -maxdepth 1 -xtype l | grep .zshrc)" ]; then smsg "Created link is broken, try run script with \"-l\" parameter to fix it" "-e"; fi
         else
@@ -93,7 +90,7 @@ sctest () {
 if $TESTMSG; then sctest; fi
 
 # Root privileges checking
-if [[ $EUID -ne 0 ]]; then smsg "Root privilegies requeried. Run this script under \"sudo\" or root user" "-c"; fi
+if [[ $EUID -ne 0 ]]; then smsg "Root privilegies requeried. Run this script under \"sudo\" or root user" "-c"; exit 0;fi
 
 if $REMOTEUPDATE; then update; fi
 if $CREATELINKS; then checkfiles; fi
