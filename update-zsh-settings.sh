@@ -15,7 +15,7 @@ done
 
 # Setting custom script's settings
 for param in "${SETTINGS[@]}"; do
-    if [[ "$param" == *"l"* ]] || [ -f "./logging.sh" ]; then LOGSTATUS=false; fi
+    if [[ "$param" == *"l"* ]] || ! [ -f "./logging.sh" ]; then LOGSTATUS=false; fi
     if [[ $param == *"e"* ]]; then ECHOSTATUS=false; fi
     if [[ $param == *"f"* ]]; then FORCESTATUS=true; ECHOSTATUS=false; fi
     if [[ $param == *"r"* ]]; then REMOTEUPDATE=false; fi
@@ -45,7 +45,7 @@ smsg () {
 # Checking and downloading updates from repo 
 update () {
     if [ -d /usr/share/zsh/core ]
-        then smsg "Checking and downloading updates"; cd /usr/share/zsh/core; git fetch /usr/share/zsh/core; git pull --recurse-submodules /usr/share/zsh/core; smsg "Settings files downloaded"
+        then smsg "Checking and downloading updates"; cd /usr/share/zsh/core; git pull; smsg "Settings files downloaded"
         else smsg "zsh/core/ dirrectory haven't found" "-e"; smsg "Cloning settings from repository"; git clone --recursive https://github.com/FrostmonsterSP/FMZshConfig.git /usr/share/zsh/core; smsg "Updates checked and downloaded"
     fi || return
     chmod +x -R /usr/share/zsh/core
