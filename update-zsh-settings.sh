@@ -12,7 +12,8 @@ done
 
 # Setting custom script's settings
 for param in "${SETTINGS[@]}"; do
-    if [[ "$param" == *"l"* ]] && [ -f "./logging.sh" ]; then LOGSTATUS=true; elif [[ "$param" == *"l"* ]] && ! [ -f "./logging.sh" ]; then smsg "Parameter \"l\" is set, but file \".\\logging.ssh\" is not found. Logs cannot be written." "-e"; fi
+    # Case doesn't work, I don't know why. Using if's
+    if [[ "$param" == *"l"* ]] && [ -f "./logging.sh" ]; then LOGSTATUS=true; elif [[ "$param" == *"l"* ]] && ! [ -f "./logging.sh" ]; then smsg "Parameter \"l\" is set, but file \".\\logging.sh\" is not found. Logs cannot be written." "-e"; fi
     if [[ "$param" == *"e"* ]]; then ECHOSTATUS=false; fi
     if [[ "$param" == *"f"* ]]; then FORCESTATUS=true; ECHOSTATUS=false; fi
 done
@@ -36,11 +37,11 @@ smsg () {
     if $LOGSTATUS; then logwrite "$1" "$LOGPARAM"; fi
 }
 
-# Checking and downloading updates from repo
+# Checking and downloading updates from repo 
 update () {
     if [ -d /usr/share/zsh/core ]
-        then smsg "Checking and downloading updates"; git clone --recursive https://github.com/FrostmonsterSP/FMZshConfig.git /usr/share/zsh/core > /dev/null 2>&1
-        else smsg "zsh/core/ dirrectory haven't found" "-e"; smsg "Cloning settings from repository"; cd /usr/share/zsh/core || return; git fetch; git pull --recurse-submodules > /dev/null 2>&1
+        then smsg "Checking and downloading updates"; cd /usr/share/zsh/core || return; git fetch; git pull --recurse-submodules> /dev/null 2>&1; smsg "Settings files downloaded"
+        else smsg "zsh/core/ dirrectory haven't found" "-e"; smsg "Cloning settings from repository"; git clone --recursive https://github.com/FrostmonsterSP/FMZshConfig.git /usr/share/zsh/core > /dev/null 2>&1; smsg "Updates checked and downloaded"
     fi
 }
 
@@ -65,10 +66,8 @@ userlinks () { true; }
 #chmod +x -R /usr/share/zsh/core
 
 # Root privileges checking
-# if [[ $EUID -ne 0 ]]; then smsg "Root privilegies requeried. Run this script under \"sudo\" or root user" "-c"; fi
+if [[ $EUID -ne 0 ]]; then smsg "Root privilegies requeried. Run this script under \"sudo\" or root user" "-c"; fi
 
-smsg "Regular message"
-smsg "Custom type message" "Custom type"
-smsg "Line break message" "-n"
-smsg "Error message" "-e"
-smsg "Critical error message" "-c"
+update
+
+smsg "ZSH Settings updated" "-n"
