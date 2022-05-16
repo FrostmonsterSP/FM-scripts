@@ -12,7 +12,7 @@ SCRIPTID=$(echo "$0" | sed -e 's/.*\///' -e 's/\.sh//')
 #    2) Message type: Error(-e)/Critical(-c)/Line break (-n)/Custom
 logwrite () {
     if [ -f "$LOGFILE" ]; then
-        if [[ ! $(grep "$SCRIPTID"<"$LOGFILE") ]]; then echo -e "\n$sn $(date +"%Y:%j:%H:%M:%S"):   SCRIPT STARTED: $SCRIPTID" >> "$LOGFILE"; sn=$((sn+1)); fi
+        if [[ ! $(grep "$SCRIPTID"<"$LOGFILE") ]]; then sn=$((sn+1)); echo -e "\n$sn $(date +"%Y:%j:%H:%M:%S"):   SCRIPT STARTED: $SCRIPTID" >> "$LOGFILE"; fi
         NST=""
         MSGTYPE="$2: "
         case "$2" in
@@ -21,17 +21,17 @@ logwrite () {
             -*"n") NST="\n"; sn=$((sn+1)); MSGTYPE="";;
             "") MSGTYPE=""
         esac
-        echo -e "$NST$sn $(date +"%Y:%j:%H:%M:%S"):   $MSGTYPE$1" >> "$LOGFILE"
         sn=$((sn+1))
+        echo -e "$NST$sn $(date +"%Y:%j:%H:%M:%S"):   $MSGTYPE$1" >> "$LOGFILE"
     else loginit; logwrite "$1" "$2"
     fi
 }
 
 # Logging initialization
 loginit () {
-    if ! [ -d .log/ ]; then mkdir .log/; fi
-    LOGFILE=".log/$(date +"%Y.%j.%H.%M.%S")-$SCRIPTID.log"
-    touch "$LOGFILE"; chmod +rw "$LOGFILE"
+    if ! [ -d "$(pwd)/.log"/ ]; then mkdir "$(pwd)/.log"; chmod a+rw "$(pwd)/.log"; fi
+    LOGFILE=""$(pwd)/.log"/$(date +"%Y.%j.%H.%M.%S")-$SCRIPTID.log"
+    touch "$LOGFILE"; chmod a+rw "$LOGFILE"
     echo -e "$sn $(date +"%Y:%j:%H:%M:%S"):   Logfile have been initialized" >> "$LOGFILE"; sn=$((sn+1))
 }
 
