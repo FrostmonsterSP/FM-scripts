@@ -45,7 +45,7 @@ smsg () {
 # Checking and downloading updates from repo 
 update () {
     if [ -d /usr/share/zsh/core ]
-        then smsg "Checking and downloading updates"; cd /usr/share/zsh/core; git pull --recursive --verbose; smsg "Settings files downloaded"
+        then smsg "Checking and downloading updates"; cd /usr/share/zsh/core; git pull --all --verbose; smsg "Settings files downloaded"
         else smsg "zsh/core/ dirrectory haven't found" "-e"; cd /usr/share/zsh; smsg "Cloning settings from repository"; git clone --recursive https://github.com/FrostmonsterSP/FMZshConfig.git /usr/share/zsh/core; smsg "Updates checked and downloaded"
     fi || return
     chmod +x -R /usr/share/zsh/core
