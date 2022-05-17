@@ -48,8 +48,12 @@ update () {
         then smsg "Checking and downloading updates"; cd /usr/share/zsh/core; git fetch --all; git reset --hard origin/master; smsg "Settings files downloaded"
         else smsg "zsh/core/ dirrectory haven't found" "-e"; cd /usr/share/zsh; smsg "Cloning settings from repository"; git clone --recursive https://github.com/FrostmonsterSP/FMZshConfig.git /usr/share/zsh/core; smsg "Updates checked and downloaded"
     fi || return
-    chmod +x -R /usr/share/zsh/core
+    smsg "Making settings scripts executable"
+    chmod a+x -R /usr/share/zsh/core
+    smsg "Copying settings to default dirrectory"
     cp /usr/share/zsh/core/.zshrc /etc/zsh/zshrc
+    smsg "Making default settings file executable"
+    chmod a+x /etc/zsh/zshrc
 }
 
 # Adds linck to core/.zshrc to users folders. Input is user folder
