@@ -45,8 +45,8 @@ smsg () {
 # Checking and downloading updates from repo 
 update () {
     if [ -d /usr/share/zsh/core ]
-        then smsg "Checking and downloading updates"; cd /usr/share/zsh/core; smsg git fetch --all; git reset --hard origin/master; smsg "Settings files downloaded"
-        else smsg "zsh/core/ dirrectory haven't found" "-e"; cd /usr/share/zsh; smsg "Cloning settings from repository"; git clone --recursive https://github.com/FrostmonsterSP/FMZshConfig.git /usr/share/zsh/core | smsg; smsg "Updates checked and downloaded"
+        then smsg "Checking and downloading updates"; cd /usr/share/zsh/core; smsg "$(git fetch --all --recurse-submodules)"; smsg "$(git reset --hard origin/master)"; smsg "Settings files downloaded"
+        else smsg "zsh/core/ dirrectory haven't found" "-e"; cd /usr/share/zsh; smsg "Cloning settings from repository"; smsg "$(git clone --recursive https://github.com/FrostmonsterSP/FMZshConfig.git /usr/share/zsh/core)"; smsg "Updates checked and downloaded"
     fi || return
     smsg "Making settings scripts executable"
     chmod a+x -R /usr/share/zsh/core
@@ -97,7 +97,7 @@ sctest () {
 if $TESTMSG; then sctest; fi
 
 # Root privileges checking
-if [[ $EUID -ne 0 ]]; then smsg "Root privilegies requeried. Run this script under \"sudo\" or root user" "-c"; exit 0;fi
+if [[ $EUID -ne 0 ]]; then smsg "Root privilegies requeried. Run this script under \"sudo\" or root user" "-c"; exit 1;fi
 
 if $REMOTEUPDATE; then update; fi
 if $CREATELINKS; then checkfiles; fi
