@@ -49,6 +49,7 @@ update () {
         else smsg "zsh/core/ dirrectory haven't found" "-e"; cd /usr/share/zsh; smsg "Cloning settings from repository"; git clone --recursive https://github.com/FrostmonsterSP/FMZshConfig.git /usr/share/zsh/core; smsg "Updates checked and downloaded"
     fi || return
     chmod +x -R /usr/share/zsh/core
+    cp /usr/share/zsh/core/.zshrc /etc/zsh/zshrc
 }
 
 # Adds linck to core/.zshrc to users folders. Input is user folder
