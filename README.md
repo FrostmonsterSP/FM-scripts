@@ -6,3 +6,4 @@
 
 - **logging.sh:** Script to print messages to the log. Should connect with other scripts. When called, it separately writes to the log the message that was given to it or an error if nothing was sent. In bash syntax for better compatibility. Type "-h" option for help.
 - **update-zsh-settings.sh:** The script updates the settings from the repository and installs them for all users on the computer, if this has not been done before. In bash syntax for better compatibility. Type "-h" option for help.
+- **extentions-installer.sh:** A little script for easyly installing a mass of Gnome Shell Extentions. Also have function for deleting copies. In bash syntax for better compatibility.
